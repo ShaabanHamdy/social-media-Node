@@ -14,7 +14,7 @@ router.post("/signUp", Validation(validationSchema.signUpSchema) ,asyncHandler(u
 router.get("/confirmation/:token", asyncHandler(userController.confirmation))
 
 //============= log in ====================================
-router.get("/logIn", Validation(validationSchema.loginSchema), asyncHandler(userController.logIn))
+router.post("/logIn", Validation(validationSchema.loginSchema), asyncHandler(userController.logIn))
 
 //============= forgetPassword ====================================
 router.post("/forgetPassword", asyncHandler(userController.forgetPassword))

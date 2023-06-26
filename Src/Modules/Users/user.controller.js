@@ -9,25 +9,23 @@ import { nanoid } from "nanoid";
 export const signUp = async (req, res, next) => {
     const { firstName,  email, password } = req.body
     const checkUser = await userModel.findOne({ email })
-    if (checkUser) {
-        return next(Error('email already exist'))
-    }
+    if (checkUser)     return next(Error('email already exist'))
+    
     const newUser = new userModel({ firstName,  email, password })
 
     const token = tokenGeneration({ payload: { newUser } })
 
     if (!token) { return next(Error("Token Generation fail ", { cause: 400 })) }
 
-    const confirmationLink = `${req.protocol}://${req.headers.host}${process.env.BASEURL}/user/confirmation/${token}`
+    const confirmationLink = `${req.protocol}://${req.headers.host}/user/confirmation/${token}`
     const message = `<a href=${confirmationLink}>please ${firstName} click to confirm </a>`
     const emailSent = sendEmail({
         to: email,
         message: message,
         subject: "Confirmation Link"
     })
-    if (!emailSent) {
-        return next(Error("fail in send email"))
-    }
+    if (!emailSent)     return next(Error("fail in send email"))
+    
     res.json({ message: "Check your email to confirm" })
 }
 // //====================================================== confirmation ===================
@@ -35,12 +33,14 @@ export const signUp = async (req, res, next) => {
 export const confirmation = async (req, res, next) => {
     const { token } = req.params
     const decode = tokenDecode({ payload: token })
-    if (!decode?.newUser) {
-        return next(Error("fail in decode", { cause: 400 }))
-    }
+    if (!decode?.newUser)     return next(Error("fail in decode", { cause: 400 }))
+    
     decode.newUser.isConfirmed = true
+
     const userConfirm = new userModel({ ...decode.newUser })
+    
     const saveUser = await userConfirm.save()
+    
     res.json({ message: "Confirmation Done" })
 }
 //==================================================== log in =======================
