@@ -7,7 +7,7 @@ const initApp = (app, express) => {
 //========================================================    
     app.use(express.json())
     ConnectionDB()
-    const port = process.env.PORT
+    const port = process.env.PORT || 5000
    
 //========================================================
 
